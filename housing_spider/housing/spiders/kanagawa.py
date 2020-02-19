@@ -74,6 +74,7 @@ class SuumoHousingSpider(scrapy.Spider):
                 './/*[@class="js-cassette_link"]'))
 
             # listing information
+            var_iter = 0
             for i in range(0, number_of_listings):
                 raw_deposit = listing.xpath(
                     './/span[@class="cassetteitem_price cassetteitem_price--deposit"]/text()').extract()
@@ -131,16 +132,16 @@ class SuumoHousingSpider(scrapy.Spider):
                 # administrative cost
                 raw_administrative_cost = listing.xpath(
                     './/span[@class="cassetteitem_price cassetteitem_price--administration"]/text()').extract()
-                administrative_cost = raw_administrative_cost[i]
+                administrative_cost = raw_administrative_cost[var_iter]
                 administrative_str = ""
-                for i in list(price):
+                for i in list(administrative_cost):
                     if i == "円":
                         continue
                     elif i == "万":
                         continue
                     else:
                         administrative_str += i
-                administrative_cost = (float(administrative_str)*1000)
+                administrative_cost = float(administrative_str)
 
                 yield {'title': title,
                        'area': area,
@@ -157,6 +158,8 @@ class SuumoHousingSpider(scrapy.Spider):
                        'rooms': rooms,
                        'sq_meters': sqmeters,
                        'link': absolutelink}
+                var_iter +=  1
+
 
         print("Finished Page: "+response.request.url)
         finished_page = response.request.url
