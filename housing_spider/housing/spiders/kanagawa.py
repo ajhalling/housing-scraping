@@ -3,8 +3,9 @@ import scrapy
 
 target = ['https://suumo.jp/jj/chintai/ichiran/FR301FC001/?ar=030&bs=040&ta=14&sc=14101&sc=14102&sc=14103&sc=14104&sc=14105&sc=14106&sc=14107&sc=14108&sc=14109&sc=14110&sc=14111&sc=14112&sc=14113&sc=14114&sc=14115&sc=14116&sc=14117&sc=14118&sc=14131&sc=14132&sc=14133&sc=14134&sc=14135&sc=14136&sc=14137&sc=14151&sc=14152&sc=14153&sc=14201&sc=14203&sc=14204&sc=14205&sc=14206&sc=14207&sc=14208&sc=14210&sc=14211&sc=14212&sc=14213&sc=14214&sc=14215&sc=14216&sc=14217&sc=14218&sc=14300&sc=14320&sc=14340&sc=14360&sc=14400&sc=14380&cb=0.0&ct=9999999&et=9999999&cn=9999999&mb=0&mt=9999999&shkr1=03&shkr2=03&shkr3=03&shkr4=03&fw2=']
 
+
 class SuumoHousingSpider(scrapy.Spider):
-    name = 'kangawa'
+    name = 'kanagawa'
     allowed_domains = ['suumo.jp']
     start_urls = target
 
@@ -19,8 +20,8 @@ class SuumoHousingSpider(scrapy.Spider):
                 './/*[@class="cassetteitem_detail-col1"]/text()').extract_first()
             distances = listing.xpath(
                 './/*[@class="cassetteitem_detail-col2"]/div/text()').extract()
-            
-            #split each distance to the station into 
+
+            # split each distance to the station into
             try:
                 distance1 = distances[0]
             except:
@@ -42,10 +43,31 @@ class SuumoHousingSpider(scrapy.Spider):
             else:
                 distance3 = distances[2]
 
-            building_age = listing.xpath(
+            # building age
+            building_age_raw = listing.xpath(
                 './/*[@class="cassetteitem_detail-col3"]/div[1]/text()').extract_first()
-            stories_tall = listing.xpath(
+            building_age_str = ""
+            for i in list(building_age_raw):
+                if i == "築":
+                    continue
+                elif i == "年":
+                    continue
+                else:
+                    building_age_str += i
+            building_age = float(building_age_str)
+
+            # stories tall
+            stories_tall_raw = listing.xpath(
                 './/*[@class="cassetteitem_detail-col3"]/div[2]/text()').extract_first()
+            stories_tall_str = ""
+            for i in list(stories_tall_raw):
+                if i == "建":
+                    continue
+                elif i == "階":
+                    continue
+                else:
+                    stories_tall_str += i
+            stories_tall = float(stories_tall_str)
 
             # int for number of listings
             number_of_listings = len(listing.xpath(
@@ -53,21 +75,6 @@ class SuumoHousingSpider(scrapy.Spider):
 
             # listing information
             for i in range(0, number_of_listings):
-                raw_floor = listing.xpath(
-                    './/*[@class="js-cassette_link"]/td[3]/text()').extract()
-                floor = (raw_floor[0]).strip()
-
-                raw_price = listing.xpath(
-                    './/span[@class="cassetteitem_price cassetteitem_price--rent"]/span/text()').extract()
-                price = raw_price[i]
-                for i in str(price.split())
-                    if i.is
-                final_price = priceint
-
-                raw_administrative_cost = listing.xpath(
-                    './/span[@class="cassetteitem_price cassetteitem_price--administration"]/text()').extract()
-                administrative_cost = raw_administrative_cost[i]
-
                 raw_deposit = listing.xpath(
                     './/span[@class="cassetteitem_price cassetteitem_price--deposit"]/text()').extract()
                 deposit = raw_deposit[i]
@@ -93,39 +100,80 @@ class SuumoHousingSpider(scrapy.Spider):
                     raw_absolutelinks.append(response.urljoin(link))
                 absolutelink = raw_absolutelinks[i]
 
-                yield {'Listing Title': title,
-                       'Area': area,
-                       'Station1': distance1,
-                       'Station2': distance2,
-                       'Station3': distance3,
-                       'Building Age': building_age,
-                       'Stories Tall': stories_tall,
-                       'Floor': floor,
-                       'Price': final_price,
-                       'Administrative Costs': administrative_cost,
-                       'Deposit': deposit,
-                       'Gratuity': gratuity,
-                       'Rooms': rooms,
-                       'Square Meters': sqmeters,
-                       'Links to Listing': absolutelink}
-              
+                # price
+                raw_price = listing.xpath(
+                    './/span[@class="cassetteitem_price cassetteitem_price--rent"]/span/text()').extract()
+                price = raw_price[i]
+                pricestring = ""
+                for i in list(price):
+                    if i == "円":
+                        continue
+                    elif i == "万":
+                        continue
+                    else:
+                        pricestring += i
+                price = (float(pricestring)*1000)
+
+                # floor
+                raw_floor = listing.xpath(
+                    './/*[@class="js-cassette_link"]/td[3]/text()').extract()
+                floor = (raw_floor[0]).strip()
+                floor_str = ""
+                for i in list(floor):
+                    if i == "階":
+                        continue
+                    elif i == "-":
+                        break
+                    else:
+                        floor_str += i
+                floor = float(floor_str)
+
+                # administrative cost
+                raw_administrative_cost = listing.xpath(
+                    './/span[@class="cassetteitem_price cassetteitem_price--administration"]/text()').extract()
+                administrative_cost = raw_administrative_cost[i]
+                administrative_str = ""
+                for i in list(price):
+                    if i == "円":
+                        continue
+                    elif i == "万":
+                        continue
+                    else:
+                        administrative_str += i
+                administrative_cost = (float(administrative_str)*1000)
+
+                yield {'title': title,
+                       'area': area,
+                       'station1': distance1,
+                       'station2': distance2,
+                       'station3': distance3,
+                       'building_age': building_age,
+                       'stories_tall': stories_tall,
+                       'floor': floor,
+                       'price': price,
+                       'administrative_cost': administrative_cost,
+                       'deposit': deposit,
+                       'gratuity': gratuity,
+                       'rooms': rooms,
+                       'sq_meters': sqmeters,
+                       'link': absolutelink}
+
         print("Finished Page: "+response.request.url)
         finished_page = response.request.url
-        
+
         if str(finished_page) == target:
-            next_page_url = response.xpath('//*[@id="js-leftColumnForm"]/div[11]/div/p/a/@href').extract_first()
+            next_page_url = response.xpath(
+                '//*[@id="js-leftColumnForm"]/div[11]/div/p/a/@href').extract_first()
             print('ran first')
 
         else:
-            next_page_url = response.xpath('//*[@id="js-leftColumnForm"]/div[11]/div/p[2]/a/@href').extract_first()
-            print('ran second')   
+            next_page_url = response.xpath(
+                '//*[@id="js-leftColumnForm"]/div[11]/div/p[2]/a/@href').extract_first()
+            print('ran second')
 
         absolute_next_page_url = response.urljoin(next_page_url)
 
         yield scrapy.Request(absolute_next_page_url)
-
-       
-            
 
         print(next_page_url)
 
