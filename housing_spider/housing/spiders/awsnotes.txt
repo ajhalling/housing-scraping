@@ -1,0 +1,21 @@
+jlCMD run -ssh
+CD to AWS directory on C drive and run:
+cd C:/AWS 
+ssh -i ScrapyAdmin.pem ubuntu@ec2-3-134-100-132.us-east-2.compute.amazonaws.com
+
+/home/ubuntu/.local/lib/python2.7/site-packages/scrapyd/
+
+http://ec2-3-134-100-132.us-east-2.compute.amazonaws.com:6800/
+
+curl http://ec2-3-134-100-132.us-east-2.compute.amazonaws.com:6800/schedule.json -d project=housing -d spider=suumo_housing
+
+From <http://ec2-3-134-100-132.us-east-2.compute.amazonaws.com:6800/> 
+
+curl http://ec2-3-134-100-132.us-east-2.compute.amazonaws.com:6800/schedule.json -d project=housing -d spider=suumo_housing -d setting=FEED_URI=/home/ubuntu/Tokyo.csv -d setting=FEED_FORMAT=csv 
+
+detach process:
+tmux
+ctrl + b, d
+
+reattach: 
+tmux attach

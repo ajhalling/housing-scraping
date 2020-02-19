@@ -1,0 +1,37 @@
+[python2]
+-ssh
+[end]
+-----------------------------------------------------------
+    How to 
+-----------------------------------------------------------
+
+
+CD to AWS directory on C drive and run:
+cd C:/AWS 
+ssh -i ScrapyAdmin.pem ubuntu@ec2-3-134-100-132.us-east-2.compute.amazonaws.com
+
+/home/ubuntu/.local/lib/python2.7/site-packages/scrapyd/
+
+http://ec2-3-134-100-132.us-east-2.compute.amazonaws.com:6800/
+
+curl http://ec2-3-134-100-132.us-east-2.compute.amazonaws.com:6800/schedule.json -d project=housing -d spider=suumo_housing
+
+From <http://ec2-3-134-100-132.us-east-2.compute.amazonaws.com:6800/> 
+
+Run tokyo job
+curl http://ec2-3-134-100-132.us-east-2.compute.amazonaws.com:6800/schedule.json -d project=housing -d spider=suumo_housing -d setting=FEED_URI=/home/ubuntu/Tokyo.csv -d setting=FEED_FORMAT=csv 
+
+Run JR job
+curl http://ec2-3-134-100-132.us-east-2.compute.amazonaws.com:6800/schedule.json -d project=housing -d spider=JR -d setting=FEED_URI=/home/ubuntu/JR.csv -d setting=FEED_FORMAT=csv 
+
+After JR: 318,71
+
+detach process:
+tmux
+ctrl + b, d
+
+reattach: 
+tmux attach
+
+cd C:/Users/AJ/Desktop/housing_spider
+scrapyd-deploy aws-target
