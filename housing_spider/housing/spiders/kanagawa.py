@@ -27,7 +27,7 @@ class SuumoHousingSpider(scrapy.Spider):
             except:
                 distance1 = 'null'
             else:
-                distance3 = distances[0]
+                distance1 = distances[0]
 
             try:
                 distance2 = distances[1]
@@ -78,19 +78,15 @@ class SuumoHousingSpider(scrapy.Spider):
             for i in range(0, number_of_listings):
                 raw_deposit = listing.xpath(
                     './/span[@class="cassetteitem_price cassetteitem_price--deposit"]/text()').extract()
-                deposit = raw_deposit[i]
+                deposit = raw_deposit[var_iter]
 
                 raw_gratuity = listing.xpath(
                     './/span[@class="cassetteitem_price cassetteitem_price--gratuity"]/text()').extract()
-                gratuity = raw_gratuity[i]
-
-                raw_rooms = listing.xpath(
-                    './/span[@class="cassetteitem_madori"]/text()').extract()
-                rooms = raw_rooms[i]
+                gratuity = raw_gratuity[var_iter]
 
                 raw_sqmeters = listing.xpath(
                     './/span[@class="cassetteitem_menseki"]/text()').extract()
-                sqmeters = raw_sqmeters[i]
+                sqmeters = raw_sqmeters[var_iter]
 
                 links = listing.xpath(
                     './/*[@class="ui-text--midium ui-text--bold"]/a/@href').extract()
@@ -99,12 +95,12 @@ class SuumoHousingSpider(scrapy.Spider):
 
                 for link in links:
                     raw_absolutelinks.append(response.urljoin(link))
-                absolutelink = raw_absolutelinks[i]
+                absolutelink = raw_absolutelinks[var_iter]
 
                 # price
                 raw_price = listing.xpath(
                     './/span[@class="cassetteitem_price cassetteitem_price--rent"]/span/text()').extract()
-                price = raw_price[i]
+                price = raw_price[var_iter]
                 pricestring = ""
                 for i in list(price):
                     if i == "円":
@@ -142,6 +138,20 @@ class SuumoHousingSpider(scrapy.Spider):
                     else:
                         administrative_str += i
                 administrative_cost = float(administrative_str)
+
+                #rooms
+                raw_rooms = listing.xpath(
+                    './/span[@class="cassetteitem_madori"]/text()').extract()
+                rooms = raw_rooms[var_iter]
+                rooms_str = ""
+                for i in list(rooms):
+                    try:
+                        fl = float(s)
+                    except:
+                        continue
+                    else:
+                        rooms_str += i
+                rooms = float(rooms_str)
 
                 yield {'title': title,
                        'area': area,
