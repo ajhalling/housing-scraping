@@ -25,21 +25,21 @@ class SuumoHousingSpider(scrapy.Spider):
             try:
                 distance1 = distances[0]
             except:
-                distance1 = 'null'
+                distance1 = None
             else:
                 distance1 = distances[0]
 
             try:
                 distance2 = distances[1]
             except:
-                distance2 = 'null'
+                distance2 = None
             else:
                 distance2 = distances[1]
 
             try:
                 distance3 = distances[2]
             except:
-                distance3 = 'null'
+                distance3 = None
             else:
                 distance3 = distances[2]
 
@@ -52,9 +52,15 @@ class SuumoHousingSpider(scrapy.Spider):
                     continue
                 elif i == "年":
                     continue
+                elif i ==  "新":
+                    building_age_str += "0"
                 else:
                     building_age_str += i
-            building_age = float(building_age_str)
+            try:
+                building_age = float(building_age_str)
+            except:
+                building_age = building_age_str
+            
 
             # stories tall
             stories_tall_raw = listing.xpath(
@@ -67,7 +73,10 @@ class SuumoHousingSpider(scrapy.Spider):
                     continue
                 else:
                     stories_tall_str += i
-            stories_tall = float(stories_tall_str)
+            try:
+                stories_tall = float(stories_tall_str)
+            except:
+                stories_tall = stories_tall_str
 
             # int for number of listings
             number_of_listings = len(listing.xpath(
@@ -76,21 +85,8 @@ class SuumoHousingSpider(scrapy.Spider):
             # listing information
             var_iter = 0
             for i in range(0, number_of_listings):
-                raw_deposit = listing.xpath(
-                    './/span[@class="cassetteitem_price cassetteitem_price--deposit"]/text()').extract()
-                deposit = raw_deposit[var_iter]
-
-                raw_gratuity = listing.xpath(
-                    './/span[@class="cassetteitem_price cassetteitem_price--gratuity"]/text()').extract()
-                gratuity = raw_gratuity[var_iter]
-
-                raw_sqmeters = listing.xpath(
-                    './/span[@class="cassetteitem_menseki"]/text()').extract()
-                sqmeters = raw_sqmeters[var_iter]
-
                 links = listing.xpath(
                     './/*[@class="ui-text--midium ui-text--bold"]/a/@href').extract()
-
                 raw_absolutelinks = []
 
                 for link in links:
@@ -109,7 +105,10 @@ class SuumoHousingSpider(scrapy.Spider):
                         continue
                     else:
                         pricestring += i
-                price = (float(pricestring)*1000)
+                try:
+                    price = (float(pricestring)*1000)
+                except:
+                    price = pricestring
 
                 # floor
                 raw_floor = listing.xpath(
@@ -123,7 +122,10 @@ class SuumoHousingSpider(scrapy.Spider):
                         break
                     else:
                         floor_str += i
-                floor = float(floor_str)
+                try:
+                    floor = float(floor_str)
+                except:
+                    floor = floor_str
 
                 # administrative cost
                 raw_administrative_cost = listing.xpath(
@@ -135,9 +137,14 @@ class SuumoHousingSpider(scrapy.Spider):
                         continue
                     elif i == "万":
                         continue
+                    elif i == "-":
+                        administrative_str += "0"
                     else:
                         administrative_str += i
-                administrative_cost = float(administrative_str)
+                try:
+                    administrative_cost = float(administrative_str)
+                except:
+                    administrative_cost = administrative_str
 
                 #rooms
                 raw_rooms = listing.xpath(
@@ -146,12 +153,69 @@ class SuumoHousingSpider(scrapy.Spider):
                 rooms_str = ""
                 for i in list(rooms):
                     try:
-                        fl = float(s)
+                        float(i)
                     except:
                         continue
                     else:
                         rooms_str += i
-                rooms = float(rooms_str)
+                try:
+                    rooms = float(rooms_str)
+                except:
+                    rooms = rooms_str
+                
+                #deposit
+                raw_deposit = listing.xpath(
+                    './/span[@class="cassetteitem_price cassetteitem_price--deposit"]/text()').extract()
+                deposit = raw_deposit[var_iter]
+                deposit_str = ""
+                for i in list(deposit):
+                    if i == "万":
+                        continue
+                    elif i == "円":
+                        continue
+                    elif i == "-" or i == '':
+                        deposit_str += "0"
+                    else:
+                        deposit_str += i
+                try:
+                    deposit = (float(deposit_str)*1000)
+                except:
+                    deposit = deposit_str
+
+                #gratuity
+                raw_gratuity = listing.xpath(
+                    './/span[@class="cassetteitem_price cassetteitem_price--gratuity"]/text()').extract()
+                gratuity = raw_gratuity[var_iter]
+                gratuity_str = ""
+                for i in list(gratuity):
+                    if i == "万":
+                        continue
+                    elif i == "円":
+                        continue
+                    elif i == "-" or i == '':
+                        gratuity_str += "0"
+                    else:
+                        gratuity_str += i
+                try:
+                    gratuity = (float(gratuity_str)*1000)
+                except:
+                    gratuity = gratuity_str
+                
+                #sqmeters
+                raw_sqmeters = listing.xpath(
+                    './/span[@class="cassetteitem_menseki"]/text()').extract()
+                sqmeters = raw_sqmeters[var_iter]
+                sqmeters_str = ""
+                for i in list(sqmeters):
+                    if i == "m" or i == "M":
+                        continue
+                    else:
+                        sqmeters_str += i
+                try:
+                    sqmeters = float(sqmeters_str)
+                except:
+                    sqmeters = sqmeters_str
+
 
                 yield {'title': title,
                        'area': area,
