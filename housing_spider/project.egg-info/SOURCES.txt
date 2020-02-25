@@ -4,10 +4,14 @@ housing/items.py
 housing/middlewares.py
 housing/pipelines.py
 housing/settings.py
-housing/spiders/JR.py
 housing/spiders/__init__.py
+housing/spiders/chiba.py
+housing/spiders/gunma.py
+housing/spiders/ibaraki.py
 housing/spiders/kanagawa.py
-housing/spiders/suumo_housing.py
+housing/spiders/saitama.py
+housing/spiders/tochigi.py
+housing/spiders/tokyo.py
 project.egg-info/PKG-INFO
 project.egg-info/SOURCES.txt
 project.egg-info/dependency_links.txt

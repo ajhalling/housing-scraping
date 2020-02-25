@@ -2,12 +2,12 @@
 import scrapy
 
 
-target = ['https://suumo.jp/jj/chintai/ichiran/FR301FC001/?ar=030&bs=040&ta=14&sc=14101&sc=14102&sc=14103&sc=14104&sc=14105&sc=14106&sc=14107&sc=14108&sc=14109&sc=14110&sc=14111&sc=14112&sc=14113&sc=14114&sc=14115&sc=14116&sc=14117&sc=14118&sc=14131&sc=14132&sc=14133&sc=14134&sc=14135&sc=14136&sc=14137&sc=14151&sc=14152&sc=14153&sc=14201&sc=14203&sc=14204&sc=14205&sc=14206&sc=14207&sc=14208&sc=14210&sc=14211&sc=14212&sc=14213&sc=14214&sc=14215&sc=14216&sc=14217&sc=14218&sc=14300&sc=14320&sc=14340&sc=14360&sc=14400&sc=14380&cb=0.0&ct=9999999&et=9999999&cn=9999999&mb=0&mt=9999999&shkr1=03&shkr2=03&shkr3=03&shkr4=03&fw2=']
+target = ['https://suumo.jp/jj/chintai/ichiran/FR301FC001/?ar=030&bs=040&ta=11&sc=11101&sc=11102&sc=11103&sc=11104&sc=11105&sc=11106&sc=11107&sc=11108&sc=11109&sc=11110&sc=11201&sc=11202&sc=11203&sc=11206&sc=11207&sc=11208&sc=11209&sc=11210&sc=11211&sc=11212&sc=11214&sc=11215&sc=11216&sc=11217&sc=11218&sc=11219&sc=11221&sc=11222&sc=11223&sc=11224&sc=11225&sc=11227&sc=11228&sc=11229&sc=11230&sc=11231&sc=11232&sc=11233&sc=11234&sc=11235&sc=11237&sc=11238&sc=11239&sc=11240&sc=11241&sc=11242&sc=11243&sc=11245&sc=11246&sc=11300&sc=11320&sc=11340&sc=11360&sc=11380&sc=11400&sc=11440&sc=11460&cb=0.0&ct=9999999&et=9999999&cn=9999999&mb=0&mt=9999999&shkr1=03&shkr2=03&shkr3=03&shkr4=03&fw2=']
 
-zone = "Kanagawa"
+zone = "Saitama"
 
-class KanagawaSpider(scrapy.Spider):
-    name = 'kanagawa'
+class SaitamaSpider(scrapy.Spider):
+    name = 'saitama'
     allowed_domains = ['suumo.jp']
     start_urls = target
 
@@ -269,7 +269,7 @@ class KanagawaSpider(scrapy.Spider):
         print("Finished Page: "+response.request.url)
         finished_page = response.request.url
 
-        if str(finished_page) == 'https://suumo.jp/jj/chintai/ichiran/FR301FC001/?ar=030&bs=040&ta=14&sc=14101&sc=14102&sc=14103&sc=14104&sc=14105&sc=14106&sc=14107&sc=14108&sc=14109&sc=14110&sc=14111&sc=14112&sc=14113&sc=14114&sc=14115&sc=14116&sc=14117&sc=14118&sc=14131&sc=14132&sc=14133&sc=14134&sc=14135&sc=14136&sc=14137&sc=14151&sc=14152&sc=14153&sc=14201&sc=14203&sc=14204&sc=14205&sc=14206&sc=14207&sc=14208&sc=14210&sc=14211&sc=14212&sc=14213&sc=14214&sc=14215&sc=14216&sc=14217&sc=14218&sc=14300&sc=14320&sc=14340&sc=14360&sc=14400&sc=14380&cb=0.0&ct=9999999&et=9999999&cn=9999999&mb=0&mt=9999999&shkr1=03&shkr2=03&shkr3=03&shkr4=03&fw2=':
+        if str(finished_page) == 'https://suumo.jp/jj/chintai/ichiran/FR301FC001/?ar=030&bs=040&ta=11&sc=11101&sc=11102&sc=11103&sc=11104&sc=11105&sc=11106&sc=11107&sc=11108&sc=11109&sc=11110&sc=11201&sc=11202&sc=11203&sc=11206&sc=11207&sc=11208&sc=11209&sc=11210&sc=11211&sc=11212&sc=11214&sc=11215&sc=11216&sc=11217&sc=11218&sc=11219&sc=11221&sc=11222&sc=11223&sc=11224&sc=11225&sc=11227&sc=11228&sc=11229&sc=11230&sc=11231&sc=11232&sc=11233&sc=11234&sc=11235&sc=11237&sc=11238&sc=11239&sc=11240&sc=11241&sc=11242&sc=11243&sc=11245&sc=11246&sc=11300&sc=11320&sc=11340&sc=11360&sc=11380&sc=11400&sc=11440&sc=11460&cb=0.0&ct=9999999&et=9999999&cn=9999999&mb=0&mt=9999999&shkr1=03&shkr2=03&shkr3=03&shkr4=03&fw2=':
             next_page_url = response.xpath('//*[@id="js-leftColumnForm"]/div[11]/div/p/a/@href').extract_first()
             print('ran first')
 
