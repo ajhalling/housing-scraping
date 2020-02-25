@@ -1,10 +1,12 @@
 # -*- coding: utf-8 -*-
 import scrapy
 
+
 target = ['https://suumo.jp/jj/chintai/ichiran/FR301FC001/?ar=030&bs=040&ta=14&sc=14101&sc=14102&sc=14103&sc=14104&sc=14105&sc=14106&sc=14107&sc=14108&sc=14109&sc=14110&sc=14111&sc=14112&sc=14113&sc=14114&sc=14115&sc=14116&sc=14117&sc=14118&sc=14131&sc=14132&sc=14133&sc=14134&sc=14135&sc=14136&sc=14137&sc=14151&sc=14152&sc=14153&sc=14201&sc=14203&sc=14204&sc=14205&sc=14206&sc=14207&sc=14208&sc=14210&sc=14211&sc=14212&sc=14213&sc=14214&sc=14215&sc=14216&sc=14217&sc=14218&sc=14300&sc=14320&sc=14340&sc=14360&sc=14400&sc=14380&cb=0.0&ct=9999999&et=9999999&cn=9999999&mb=0&mt=9999999&shkr1=03&shkr2=03&shkr3=03&shkr4=03&fw2=']
 
+zone = "Kanagawa"
 
-class SuumoHousingSpider(scrapy.Spider):
+class KanagawaSpider(scrapy.Spider):
     name = 'kanagawa'
     allowed_domains = ['suumo.jp']
     start_urls = target
@@ -149,20 +151,48 @@ class SuumoHousingSpider(scrapy.Spider):
                 #rooms
                 raw_rooms = listing.xpath(
                     './/span[@class="cassetteitem_madori"]/text()').extract()
-                rooms = raw_rooms[var_iter]
-                rooms_str = ""
-                for i in list(rooms):
-                    try:
-                        float(i)
-                    except:
-                        continue
-                    else:
-                        rooms_str += i
-                try:
-                    rooms = float(rooms_str)
-                except:
-                    rooms = rooms_str
+                rooms = str(raw_rooms[var_iter])
+                # rooms_str = ""
                 
+                studio = ["ワンルーム"]
+                one_room = ["1K","1DK", "1LDK", "1LK", "1SDK", "1SK", "1SLDK", "1SLK"]
+                two_rooms = ["2K","2DK", "2LDK", "2LK", "2SDK", "2SK", "2SLDK", "2SLK"]
+                three_rooms = ["3K","3DK", "3LDK", "3LK", "3SDK", "3SK", "3SLDK", "3SLK"]
+                four_rooms = ["4K","4DK", "4LDK", "4LK", "4SDK", "4SK", "4SLDK", "4SLK"]
+                five_rooms = ["5K","5DK", "5LDK", "5LK", "5SDK", "5SK", "5SLDK", "5SLK"]
+                six_rooms = ["6K","6DK", "6LDK", "6LK", "6SDK", "6SK", "6SLDK", "6SLK"]
+                seven_rooms = ["7K","7DK", "7LDK", "7LK", "7SDK", "7SK", "7SLDK", "7SLK"]
+                eight_rooms = ["8K","8DK", "8LDK", "8LK", "8SDK", "8SK", "8SLDK", "8SLK"]
+                nine_rooms = ["9K","9DK", "9LDK", "9LK", "9SDK", "9SK", "9SLDK", "9SLK"]
+
+                if rooms in studio:
+                    rooms = 0
+                elif rooms in one_room:
+                    rooms = 1
+                elif rooms in two_rooms:
+                    rooms = 2
+                elif rooms in three_rooms:
+                    rooms = 3
+                elif rooms in four_rooms:
+                    rooms = 4
+                elif rooms in five_rooms:
+                    rooms = 5
+                elif rooms in six_rooms:
+                    rooms = 6
+                elif rooms in seven_rooms:
+                    rooms = 7
+                elif rooms in eight_rooms:
+                    rooms = 8
+                elif rooms in nine_rooms:
+                    rooms = 9
+                else:
+                    rooms = None
+
+                try:
+                    rooms = float(rooms)
+                except:
+                    rooms = rooms
+
                 #deposit
                 raw_deposit = listing.xpath(
                     './/span[@class="cassetteitem_price cassetteitem_price--deposit"]/text()').extract()
@@ -219,6 +249,7 @@ class SuumoHousingSpider(scrapy.Spider):
 
                 yield {'title': title,
                        'area': area,
+                       'zone': zone,
                        'station1': distance1,
                        'station2': distance2,
                        'station3': distance3,
@@ -238,16 +269,13 @@ class SuumoHousingSpider(scrapy.Spider):
         print("Finished Page: "+response.request.url)
         finished_page = response.request.url
 
-        if str(finished_page) == target:
-            next_page_url = response.xpath(
-                '//*[@id="js-leftColumnForm"]/div[11]/div/p/a/@href').extract_first()
+        if str(finished_page) == 'https://suumo.jp/jj/chintai/ichiran/FR301FC001/?ar=030&bs=040&ta=14&sc=14101&sc=14102&sc=14103&sc=14104&sc=14105&sc=14106&sc=14107&sc=14108&sc=14109&sc=14110&sc=14111&sc=14112&sc=14113&sc=14114&sc=14115&sc=14116&sc=14117&sc=14118&sc=14131&sc=14132&sc=14133&sc=14134&sc=14135&sc=14136&sc=14137&sc=14151&sc=14152&sc=14153&sc=14201&sc=14203&sc=14204&sc=14205&sc=14206&sc=14207&sc=14208&sc=14210&sc=14211&sc=14212&sc=14213&sc=14214&sc=14215&sc=14216&sc=14217&sc=14218&sc=14300&sc=14320&sc=14340&sc=14360&sc=14400&sc=14380&cb=0.0&ct=9999999&et=9999999&cn=9999999&mb=0&mt=9999999&shkr1=03&shkr2=03&shkr3=03&shkr4=03&fw2=':
+            next_page_url = response.xpath('//*[@id="js-leftColumnForm"]/div[11]/div/p/a/@href').extract_first()
             print('ran first')
 
         else:
-            next_page_url = response.xpath(
-                '//*[@id="js-leftColumnForm"]/div[11]/div/p[2]/a/@href').extract_first()
-            print('ran second')
-
+            next_page_url = response.xpath('//*[@id="js-leftColumnForm"]/div[11]/div/p[2]/a/@href').extract_first()
+            print('ran second')   
         absolute_next_page_url = response.urljoin(next_page_url)
 
         yield scrapy.Request(absolute_next_page_url)
