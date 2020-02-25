@@ -14,6 +14,7 @@ BOT_NAME = 'suumo_housing'
 
 SPIDER_MODULES = ['housing.spiders']
 NEWSPIDER_MODULE = 'housing.spiders'
+CLOSESPIDER_PAGECOUNT = 2
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
 USER_AGENT = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/60.0.3112.113 Safari/537.36'

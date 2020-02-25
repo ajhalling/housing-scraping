@@ -150,20 +150,48 @@ class SuumoHousingSpider(scrapy.Spider):
                 #rooms
                 raw_rooms = listing.xpath(
                     './/span[@class="cassetteitem_madori"]/text()').extract()
-                rooms = raw_rooms[var_iter]
-                rooms_str = ""
-                for i in list(rooms):
-                    try:
-                        float(i)
-                    except:
-                        continue
-                    else:
-                        rooms_str += i
-                try:
-                    rooms = float(rooms_str)
-                except:
-                    rooms = rooms_str
+                rooms = str(raw_rooms[var_iter])
+                # rooms_str = ""
                 
+                studio = ["ワンルーム"]
+                one_room = ["1K","1DK", "1LDK", "1LK", "1SDK", "1SK", "1SLDK", "1SLK"]
+                two_rooms = ["2K","2DK", "2LDK", "2LK", "2SDK", "2SK", "2SLDK", "2SLK"]
+                three_rooms = ["3K","3DK", "3LDK", "3LK", "3SDK", "3SK", "3SLDK", "3SLK"]
+                four_rooms = ["4K","4DK", "4LDK", "4LK", "4SDK", "4SK", "4SLDK", "4SLK"]
+                five_rooms = ["5K","5DK", "5LDK", "5LK", "5SDK", "5SK", "5SLDK", "5SLK"]
+                six_rooms = ["6K","6DK", "6LDK", "6LK", "6SDK", "6SK", "6SLDK", "6SLK"]
+                seven_rooms = ["7K","7DK", "7LDK", "7LK", "7SDK", "7SK", "7SLDK", "7SLK"]
+                eight_rooms = ["8K","8DK", "8LDK", "8LK", "8SDK", "8SK", "8SLDK", "8SLK"]
+                nine_rooms = ["9K","9DK", "9LDK", "9LK", "9SDK", "9SK", "9SLDK", "9SLK"]
+
+                if rooms in studio:
+                    rooms = 0
+                elif rooms in one_room:
+                    rooms = 1
+                elif rooms in two_rooms:
+                    rooms = 2
+                elif rooms in three_rooms:
+                    rooms = 3
+                elif rooms in four_rooms:
+                    rooms = 4
+                elif rooms in five_rooms:
+                    rooms = 5
+                elif rooms in six_rooms:
+                    rooms = 6
+                elif rooms in seven_rooms:
+                    rooms = 7
+                elif rooms in eight_rooms:
+                    rooms = 8
+                elif rooms in nine_rooms:
+                    rooms = 9
+                else:
+                    rooms = None
+
+                try:
+                    rooms = float(rooms)
+                except:
+                    rooms = rooms
+
                 #deposit
                 raw_deposit = listing.xpath(
                     './/span[@class="cassetteitem_price cassetteitem_price--deposit"]/text()').extract()
