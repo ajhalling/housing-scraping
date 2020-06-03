@@ -247,39 +247,54 @@ class TokyoSpider(scrapy.Spider):
                     sqmeters = sqmeters_str
 
 
-                yield {'title': title,
-                       'area': area,
-                       'zone': zone,
-                       'station1': distance1,
-                       'station2': distance2,
-                       'station3': distance3,
-                       'building_age': building_age,
-                       'stories_tall': stories_tall,
-                       'floor': floor,
-                       'price': price,
-                       'administrative_cost': administrative_cost,
-                       'deposit': deposit,
-                       'gratuity': gratuity,
-                       'rooms': rooms,
-                       'sq_meters': sqmeters,
-                       'link': absolutelink}
+                data = {'title': title,
+                        'area': area,
+                        'zone': zone,
+                        'station1': distance1,
+                        'station2': distance2,
+                        'station3': distance3,
+                        'building_age': building_age,
+                        'stories_tall': stories_tall,
+                        'floor': floor,
+                        'price': price,
+                        'administrative_cost': administrative_cost,
+                        'deposit': deposit,
+                        'gratuity': gratuity,
+                        'rooms': rooms,
+                        'sq_meters': sqmeters,
+                        'link': absolutelink}
+
                 var_iter +=  1
 
+                yield response.follow(data['link'], callback=self.parse_detail, meta={'data':data})
 
-        print("Finished Page: "+response.request.url)
-        finished_page = response.request.url
+        next_link = response.xpath('//*[@class="pagination-parts"]/a[text()="次へ"]/@href').get()
 
-        if str(finished_page) == 'https://suumo.jp/jj/chintai/ichiran/FR301FC001/?ar=030&bs=040&ta=13&sc=13101&sc=13102&sc=13103&sc=13104&sc=13105&sc=13113&sc=13106&sc=13107&sc=13108&sc=13118&sc=13121&sc=13122&sc=13123&sc=13109&sc=13110&sc=13111&sc=13112&sc=13114&sc=13115&sc=13120&sc=13116&sc=13117&sc=13119&sc=13201&sc=13202&sc=13203&sc=13204&sc=13205&sc=13206&sc=13207&sc=13208&sc=13209&sc=13210&sc=13211&sc=13212&sc=13213&sc=13214&sc=13215&sc=13218&sc=13219&sc=13220&sc=13221&sc=13222&sc=13223&sc=13224&sc=13225&sc=13227&sc=13228&sc=13229&sc=13300&cb=0.0&ct=9999999&et=9999999&cn=9999999&mb=0&mt=9999999&shkr1=03&shkr2=03&shkr3=03&shkr4=03&fw2=':
-            next_page_url = response.xpath('//*[@id="js-leftColumnForm"]/div[11]/div/p/a/@href').extract_first()
-            print('ran first')
+        if next_link is not None:
+            yield response.follow(next_link, callback=self.parse)
 
-        else:
-            next_page_url = response.xpath('//*[@id="js-leftColumnForm"]/div[11]/div/p[2]/a/@href').extract_first()
-            print('ran second')   
-        absolute_next_page_url = response.urljoin(next_page_url)
+    def parse_detail(self, response):
+        data = response.meta['data']
 
-        yield scrapy.Request(absolute_next_page_url)
+        data['features'] = response.css('#bkdt-option > div > ul > li::text').get()
+        data['detail'] = response.xpath('//th[text()="間取り詳細"]/following-sibling::td[1]/text()').get()
+        data['construction'] = response.xpath('//th[text()="構造"]/following-sibling::td[1]/text()').get()
+        data['story'] = response.xpath('//th[text()="階建"]/following-sibling::td[1]/text()').get()
+        data['age'] = response.xpath('//th[text()="築年月"]/following-sibling::td[1]/text()').get()
+        data['nonlife_insurance'] = response.xpath('//th[text()="損保"]/following-sibling::td[1]/text()').get()
+        data['move'] = response.xpath('//th[text()="入居"]/following-sibling::td[1]/text()').get()
+        data['conditions'] = response.xpath('//th[text()="条件"]/following-sibling::td[1]/text()').get()
+        data['code'] = response.xpath('//th[text()="SUUMO"]/following-sibling::td[1]/text()').get()
+        data['surety_company'] = response.xpath('//th[text()="保証会社"]/following-sibling::td[1]/text()').get()
+        data['initial_cost'] = response.xpath('//th[text()="ほか初期費用"]/following-sibling::td[1]/ul/li/text()').get()
+        data['other_cost'] = response.xpath('//th[text()="ほか諸費用"]/following-sibling::td[1]/ul/li/text()').get()
+        data['notes'] = response.xpath('//th[text()="備考"]/following-sibling::td[1]/ul/li/text()').get()
 
-        print(next_page_url)
+        data['floor_plan'] = response.xpath('//th[text()="間取り"]/following-sibling::td[1]/text()').get()
+        data['building_type'] = response.xpath('//th[text()="建物種別"]/following-sibling::td[1]/text()').get()
 
-        print("beginning to scrape: "+absolute_next_page_url)
+        for key in data.keys():
+            if (type(data[key]) == str):
+                data[key] = data[key].strip()
+
+        return data
