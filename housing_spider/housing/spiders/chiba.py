@@ -284,7 +284,7 @@ class ChibaSpider(scrapy.Spider):
         data['move'] = response.xpath('//th[text()="入居"]/following-sibling::td[1]/text()').get()
         data['conditions'] = response.xpath('//th[text()="条件"]/following-sibling::td[1]/text()').get()
         data['code'] = response.xpath('//th[text()="SUUMO"]/following-sibling::td[1]/text()').get()
-        data['surety_company'] = response.xpath('//th[text()="保証会社"]/following-sibling::td[1]/text()').get()
+        data['surety_company'] = response.xpath('//th[text()="保証会社"]/following-sibling::td[1]/ul/li/text()').get()
         data['initial_cost'] = response.xpath('//th[text()="ほか初期費用"]/following-sibling::td[1]/ul/li/text()').get()
         data['other_cost'] = response.xpath('//th[text()="ほか諸費用"]/following-sibling::td[1]/ul/li/text()').get()
         data['notes'] = response.xpath('//th[text()="備考"]/following-sibling::td[1]/ul/li/text()').get()
