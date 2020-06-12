@@ -1,15 +1,19 @@
 # -*- coding: utf-8 -*-
 import scrapy
 
-
-target = ['https://suumo.jp/jj/chintai/ichiran/FR301FC001/?ar=030&bs=040&ta=13&sc=13101&sc=13102&sc=13103&sc=13104&sc=13105&sc=13113&sc=13106&sc=13107&sc=13108&sc=13118&sc=13121&sc=13122&sc=13123&sc=13109&sc=13110&sc=13111&sc=13112&sc=13114&sc=13115&sc=13120&sc=13116&sc=13117&sc=13119&sc=13201&sc=13202&sc=13203&sc=13204&sc=13205&sc=13206&sc=13207&sc=13208&sc=13209&sc=13210&sc=13211&sc=13212&sc=13213&sc=13214&sc=13215&sc=13218&sc=13219&sc=13220&sc=13221&sc=13222&sc=13223&sc=13224&sc=13225&sc=13227&sc=13228&sc=13229&sc=13300&cb=0.0&ct=9999999&et=9999999&cn=9999999&mb=0&mt=9999999&shkr1=03&shkr2=03&shkr3=03&shkr4=03&fw2=']
-
 zone = "Tokyo"
 
 class TokyoSpider(scrapy.Spider):
     name = 'tokyo'
     allowed_domains = ['suumo.jp']
-    start_urls = target
+
+    def start_requests(self):
+        cities = ['13101', '13102', '13103', '13104', '13105', '13113', '13106', '13107', '13108', '13118', '13121', '13122', '13123', '13109', '13110', '13111', '13112', '13114', '13115', '13120', '13116', '13117', '13119', '13201', '13202', '13203', '13204', '13205', '13206', '13207', '13208', '13209', '13210', '13211', '13212', '13213', '13214', '13215', '13218', '13219', '13220', '13221', '13222', '13223', '13224', '13225', '13227', '13228', '13229', '13300']
+
+        for city in cities:
+            url = f'https://suumo.jp/jj/chintai/ichiran/FR301FC001/?ar=030&bs=040&ta=13&sc={city}&cb=0.0&ct=9999999&et=9999999&cn=9999999&mb=0&mt=9999999&shkr1=03&shkr2=03&shkr3=03&shkr4=03&fw2='
+
+            yield scrapy.Request(url)
 
     def parse(self, response):
         listings = response.xpath('//*[@class="cassetteitem"]')

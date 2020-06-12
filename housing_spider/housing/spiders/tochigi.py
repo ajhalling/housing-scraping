@@ -1,15 +1,19 @@
 # -*- coding: utf-8 -*-
 import scrapy
 
-
-target = ['https://suumo.jp/jj/chintai/ichiran/FR301FC001/?ar=030&bs=040&ta=09&sc=09201&sc=09202&sc=09203&sc=09204&sc=09205&sc=09206&sc=09208&sc=09209&sc=09210&sc=09211&sc=09213&sc=09214&sc=09215&sc=09216&sc=09300&sc=09340&sc=09360&sc=09380&sc=09400&cb=0.0&ct=9999999&et=9999999&cn=9999999&mb=0&mt=9999999&shkr1=03&shkr2=03&shkr3=03&shkr4=03&fw2=']
-
 zone = "Tochigi"
 
 class TochigiSpider(scrapy.Spider):
     name = 'tochigi'
     allowed_domains = ['suumo.jp']
-    start_urls = target
+
+    def start_requests(self):
+        cities = ['09201', '09202', '09203', '09204', '09205', '09206', '09208', '09209', '09210', '09211', '09213', '09214', '09215', '09216', '09300', '09340', '09360', '09380', '09400']
+
+        for city in cities:
+            url = f'https://suumo.jp/jj/chintai/ichiran/FR301FC001/?ar=030&bs=040&ta=09&sc={city}&cb=0.0&ct=9999999&et=9999999&cn=9999999&mb=0&mt=9999999&shkr1=03&shkr2=03&shkr3=03&shkr4=03&fw2='
+
+            yield scrapy.Request(url)
 
     def parse(self, response):
         listings = response.xpath('//*[@class="cassetteitem"]')

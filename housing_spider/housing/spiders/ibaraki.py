@@ -1,15 +1,19 @@
 # -*- coding: utf-8 -*-
 import scrapy
 
-
-target = ['https://suumo.jp/jj/chintai/ichiran/FR301FC001/?ar=030&bs=040&ta=08&sc=08201&sc=08202&sc=08203&sc=08204&sc=08205&sc=08207&sc=08208&sc=08210&sc=08211&sc=08212&sc=08214&sc=08215&sc=08216&sc=08217&sc=08219&sc=08220&sc=08221&sc=08222&sc=08223&sc=08224&sc=08225&sc=08226&sc=08227&sc=08228&sc=08229&sc=08230&sc=08231&sc=08232&sc=08233&sc=08234&sc=08235&sc=08236&sc=08300&sc=08340&sc=08360&sc=08440&sc=08520&sc=08540&sc=08560&cb=0.0&ct=9999999&et=9999999&cn=9999999&mb=0&mt=9999999&shkr1=03&shkr2=03&shkr3=03&shkr4=03&fw2=']
-
 zone = "Ibaraki"
 
 class IbarakiSpider(scrapy.Spider):
     name = 'ibaraki'
     allowed_domains = ['suumo.jp']
-    start_urls = target
+
+    def start_requests(self):
+        cities = ['08201', '08202', '08203', '08204', '08205', '08207', '08208', '08210', '08211', '08212', '08214', '08215', '08216', '08217', '08219', '08220', '08221', '08222', '08223', '08224', '08225', '08226', '08227', '08228', '08229', '08230', '08231', '08232', '08233', '08234', '08235', '08236', '08300', '08340', '08360', '08440', '08520', '08540', '08560']
+
+        for city in cities:
+            url = f'https://suumo.jp/jj/chintai/ichiran/FR301FC001/?ar=030&bs=040&ta=08&sc={city}&cb=0.0&ct=9999999&et=9999999&cn=9999999&mb=0&mt=9999999&shkr1=03&shkr2=03&shkr3=03&shkr4=03&fw2='
+
+            yield scrapy.Request(url)
 
     def parse(self, response):
         listings = response.xpath('//*[@class="cassetteitem"]')

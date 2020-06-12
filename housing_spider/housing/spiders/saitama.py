@@ -1,15 +1,19 @@
 # -*- coding: utf-8 -*-
 import scrapy
 
-
-target = ['https://suumo.jp/jj/chintai/ichiran/FR301FC001/?ar=030&bs=040&ta=11&sc=11101&sc=11102&sc=11103&sc=11104&sc=11105&sc=11106&sc=11107&sc=11108&sc=11109&sc=11110&sc=11201&sc=11202&sc=11203&sc=11206&sc=11207&sc=11208&sc=11209&sc=11210&sc=11211&sc=11212&sc=11214&sc=11215&sc=11216&sc=11217&sc=11218&sc=11219&sc=11221&sc=11222&sc=11223&sc=11224&sc=11225&sc=11227&sc=11228&sc=11229&sc=11230&sc=11231&sc=11232&sc=11233&sc=11234&sc=11235&sc=11237&sc=11238&sc=11239&sc=11240&sc=11241&sc=11242&sc=11243&sc=11245&sc=11246&sc=11300&sc=11320&sc=11340&sc=11360&sc=11380&sc=11400&sc=11440&sc=11460&cb=0.0&ct=9999999&et=9999999&cn=9999999&mb=0&mt=9999999&shkr1=03&shkr2=03&shkr3=03&shkr4=03&fw2=']
-
 zone = "Saitama"
 
 class SaitamaSpider(scrapy.Spider):
     name = 'saitama'
     allowed_domains = ['suumo.jp']
-    start_urls = target
+
+    def start_requests(self):
+        cities = ['11101', '11102', '11103', '11104', '11105', '11106', '11107', '11108', '11109', '11110', '11201', '11202', '11203', '11206', '11207', '11208', '11209', '11210', '11211', '11212', '11214', '11215', '11216', '11217', '11218', '11219', '11221', '11222', '11223', '11224', '11225', '11227', '11228', '11229', '11230', '11231', '11232', '11233', '11234', '11235', '11237', '11238', '11239', '11240', '11241', '11242', '11243', '11245', '11246', '11300', '11320', '11340', '11360', '11380', '11400', '11440', '11460']
+
+        for city in cities:
+            url = f'https://suumo.jp/jj/chintai/ichiran/FR301FC001/?ar=030&bs=040&ta=11&sc={city}&cb=0.0&ct=9999999&et=9999999&cn=9999999&mb=0&mt=9999999&shkr1=03&shkr2=03&shkr3=03&shkr4=03&fw2='
+
+            yield scrapy.Request(url)
 
     def parse(self, response):
         listings = response.xpath('//*[@class="cassetteitem"]')

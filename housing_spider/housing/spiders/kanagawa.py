@@ -1,15 +1,19 @@
 # -*- coding: utf-8 -*-
 import scrapy
 
-
-target = ['https://suumo.jp/jj/chintai/ichiran/FR301FC001/?ar=030&bs=040&ta=14&sc=14101&sc=14102&sc=14103&sc=14104&sc=14105&sc=14106&sc=14107&sc=14108&sc=14109&sc=14110&sc=14111&sc=14112&sc=14113&sc=14114&sc=14115&sc=14116&sc=14117&sc=14118&sc=14131&sc=14132&sc=14133&sc=14134&sc=14135&sc=14136&sc=14137&sc=14151&sc=14152&sc=14153&sc=14201&sc=14203&sc=14204&sc=14205&sc=14206&sc=14207&sc=14208&sc=14210&sc=14211&sc=14212&sc=14213&sc=14214&sc=14215&sc=14216&sc=14217&sc=14218&sc=14300&sc=14320&sc=14340&sc=14360&sc=14400&sc=14380&cb=0.0&ct=9999999&et=9999999&cn=9999999&mb=0&mt=9999999&shkr1=03&shkr2=03&shkr3=03&shkr4=03&fw2=']
-
 zone = "Kanagawa"
 
 class KanagawaSpider(scrapy.Spider):
     name = 'kanagawa'
     allowed_domains = ['suumo.jp']
-    start_urls = target
+
+    def start_requests(self):
+        cities = ['14101', '14102', '14103', '14104', '14105', '14106', '14107', '14108', '14109', '14110', '14111', '14112', '14113', '14114', '14115', '14116', '14117', '14118', '14131', '14132', '14133', '14134', '14135', '14136', '14137', '14151', '14152', '14153', '14201', '14203', '14204', '14205', '14206', '14207', '14208', '14210', '14211', '14212', '14213', '14214', '14215', '14216', '14217', '14218', '14300', '14320', '14340', '14360', '14400', '14380']
+
+        for city in cities:
+            url = f'https://suumo.jp/jj/chintai/ichiran/FR301FC001/?ar=030&bs=040&ta=14&sc={city}&cb=0.0&ct=9999999&et=9999999&cn=9999999&mb=0&mt=9999999&shkr1=03&shkr2=03&shkr3=03&shkr4=03&fw2='
+
+            yield scrapy.Request(url)
 
     def parse(self, response):
         listings = response.xpath('//*[@class="cassetteitem"]')
